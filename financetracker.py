@@ -2,6 +2,7 @@
 print("\n" + "="*40 + " FINANCE TRACKER " + "="*40)
 import pwinput
 import json
+import requests
 
 try:
  account_file = open("account.txt", "r")
@@ -142,6 +143,33 @@ def show_report():
          print(f"{category2.title()} - ${amount2} ({amount2 / total_expense * 100:.1f}%)")
         else:
             print(f"{category2.title()} - ${amount2} (0%)")
+
+def exchange():
+    global balance
+    profit()
+    print("\n" + " "*45 + " BALANCE EXCHANGE ")
+    base_url = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies"
+
+
+    def get_currency_rate(base_currency, target_currency):
+        url = f"{base_url}/{base_currency}.json"
+        response = requests.get(url)
+
+        if response.status_code == 200:
+         data = response.json()
+         rate = data[base_currency][target_currency]
+         return rate
+    
+        else:
+          print(f"Error: {response.status_code}")
+
+    base_currency = "usd"
+    target_currency = input("\nTarget Currency (EUR, TRY etc.): ").strip().lower()
+    currency_rate = get_currency_rate(base_currency, target_currency)
+
+    if currency_rate:
+     exchanged_balance = balance * currency_rate
+     print(f"\nYour balance in {target_currency.upper()}: {exchanged_balance:.2f}")
            
 
 def save_data():
@@ -189,8 +217,9 @@ while True:
 2. Add Expense
 3. Show Balance
 4. Show Report
-5. Save and Exit""")
-    menu = input("\nSelect (1, 2, 3, 4 or 5): ")
+5. Balance Currency Exchange
+6. Save and Exit""")
+    menu = input("\nSelect (1, 2, 3, 4, 5 or 6): ")
     if menu == "1":
         add_income()
     elif menu == "2":
@@ -200,6 +229,8 @@ while True:
     elif menu == "4":
         show_report()
     elif menu == "5":
+        exchange()
+    elif menu == "6":
         save_data()
         break
     else:
