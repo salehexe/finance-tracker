@@ -3,7 +3,6 @@ print("\n" + "="*40 + " FINANCE TRACKER " + "="*40)
 import pwinput
 import json
 import requests
-from time import sleep
 from apscheduler.schedulers.background import BackgroundScheduler, BlockingScheduler
 
 try:
