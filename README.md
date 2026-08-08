@@ -24,6 +24,7 @@ Before running, install the required package:
 
 ```bash
 pip install pwinput
+pip install apscheduler
 ```
 
 ## 🚀 How to Run
