@@ -3,6 +3,8 @@ print("\n" + "="*40 + " FINANCE TRACKER " + "="*40)
 import pwinput
 import json
 import requests
+from time import sleep
+from apscheduler.schedulers.background import BackgroundScheduler, BlockingScheduler
 
 try:
  account_file = open("account.txt", "r")
@@ -210,6 +212,11 @@ def load_data():
     except FileNotFoundError:
         pass
 
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(save_data, 'interval', seconds = 1)
+scheduler.start()
+
 load_data()
 while True:
     print("\n" + "-"*45 + " MENU " + "-"*45)
@@ -218,7 +225,7 @@ while True:
 3. Show Balance
 4. Show Report
 5. Balance Currency Exchange
-6. Save and Exit""")
+6. Exit""")
     menu = input("\nSelect (1, 2, 3, 4, 5 or 6): ")
     if menu == "1":
         add_income()
@@ -231,7 +238,6 @@ while True:
     elif menu == "5":
         exchange()
     elif menu == "6":
-        save_data()
         break
     else:
         print("Wrong format. Try again.")
