@@ -158,8 +158,11 @@ def exchange():
 
         if response.status_code == 200:
          data = response.json()
-         rate = data[base_currency][target_currency]
-         return rate
+         if target_currency in data[base_currency]:
+             rate = data[base_currency][target_currency]
+             return rate
+         else:
+            print("Error: 404")
     
         else:
           print(f"Error: {response.status_code}")
@@ -223,7 +226,7 @@ while True:
 2. Add Expense
 3. Show Balance
 4. Show Report
-5. Balance Currency Exchange
+5. Balance Currency Converter
 6. Exit""")
     menu = input("\nSelect (1, 2, 3, 4, 5 or 6): ")
     if menu == "1":
