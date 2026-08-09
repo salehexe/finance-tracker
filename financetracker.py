@@ -64,26 +64,27 @@ except FileNotFoundError:
  account_file.close()
 
 # ---------- FINANCE TRACKER ----------
-incomes = []
-expenses = []
-total_income_categories = {"projects": 0, "retainers": 0, "consulting": 0, "maintenance": 0, "other": 0}
-total_expense_categories = {"ads": 0, "salaries": 0, "freelancers": 0, "software": 0, "office": 0, "other": 0}
-total_income = 0
-total_expense = 0
-balance = 0
+class FinanceTracker:
+   def __init__(self):
+      self.incomes = []
+      self.expenses = []
+      self.total_income_categories = {"projects": 0, "retainers": 0, "consulting": 0, "maintenance": 0, "other": 0}
+      self.total_expense_categories = {"ads": 0, "salaries": 0, "freelancers": 0, "software": 0, "office": 0, "other": 0}
+      self.total_income = 0
+      self.total_expense = 0
+      self.balance = 0
 
-def add_income():
-    global incomes, total_income_categories
+   def add_income(self):
     print("\n" + " "*45 + " ADD INCOME ")
     while True:
         try:
          income_amount = float(input("\nIncome Amount ($): "))
          while True:
-            income_category = input("Category (Projects/Retainers/Consulting/Maintenance/Other): ").lstrip().lower()
+            income_category = input("Category (Projects/Retainers/Consulting/Maintenance/Other): ").strip().lower()
             if income_category == "projects" or income_category == "retainers" or income_category == "consulting" or income_category == "maintenance" or income_category == "other":
                 print("Added")
-                incomes.append({"Amount": income_amount, "Category": income_category})
-                total_income_categories[income_category] += income_amount
+                self.incomes.append({"Amount": income_amount, "Category": income_category})
+                self.total_income_categories[income_category] += income_amount
                 return
             else:
                 print("Wrong format. Try again.")
@@ -91,135 +92,133 @@ def add_income():
             print("Something went wrong. Try again")
 
            
-def add_expense():
-    global expenses, total_expense_categories
+   def add_expense(self):
     print("\n" + " "*45 + " ADD EXPENSE ")
     while True:
         try:
          expense_amount = float(input("\nExpense Amount ($): "))
          while True:
-            expense_category = input("Category (Ads/Salaries/Office/Software/Freelancers/Other): ").lstrip().lower()
+            expense_category = input("Category (Ads/Salaries/Office/Software/Freelancers/Other): ").strip().lower()
             if expense_category == "ads" or expense_category == "salaries" or expense_category == "office" or expense_category == "software" or expense_category == "freelancers" or expense_category == "other":
                 print("Added")
-                expenses.append({"Amount": expense_amount, "Category": expense_category})
-                total_expense_categories[expense_category] += expense_amount
+                self.expenses.append({"Amount": expense_amount, "Category": expense_category})
+                self.total_expense_categories[expense_category] += expense_amount
                 return
             else:
                 print("Wrong format. Try again.")
         except ValueError:
             print("Something went wrong. Try again.")
 
-def profit():
-    global balance, total_income, total_expense
-    total_income = 0
-    total_expense = 0
-    for income in incomes:
-        total_income += income["Amount"]
-    for expense in expenses:
-        total_expense += expense["Amount"]
-    balance = total_income - total_expense
+   def profit(self):
+    self.total_income = 0
+    self.total_expense = 0
+    for income in self.incomes:
+        self.total_income += income["Amount"]
+    for expense in self.expenses:
+        self.total_expense += expense["Amount"]
+    self.balance = self.total_income - self.total_expense
  
-def show_balance():
+   def show_balance(self):
     print("\n" + " "*45 + " BALANCE ")
-    profit()
-    print(f"Current Balance: ${balance}")
+    self.profit()
+    print(f"Current Balance: ${self.balance}")
 
-def show_report():
+   def show_report(self):
     print("\n" + " "*45 + " REPORT ")
-    profit()
-    print(f"Total income: ${total_income} \nTotal expense: ${total_expense} \n\nProfit: ${balance}" )
-    if total_income > 0:
-        print(f"Profit Margin: {balance / total_income * 100:.1f}%")
+    self.profit()
+    print(f"Total income: ${self.total_income} \nTotal expense: ${self.total_expense} \n\nProfit: ${self.balance}" )
+    if self.total_income > 0:
+        print(f"Profit Margin: {self.balance / self.total_income * 100:.1f}%")
     else:
         print("Profit Margin: 0%")
     print("\nTotal Income Sources")
-    for category, amount in total_income_categories.items():
-        if total_income > 0:
-         print(f"{category.title()} - ${amount} ({amount / total_income * 100:.1f}%)")
+    for category, amount in self.total_income_categories.items():
+        if self.total_income > 0:
+         print(f"{category.title()} - ${amount} ({amount / self.total_income * 100:.1f}%)")
         else:
             print(f"{category.title()} - ${amount} (0%)")
     print("\nTotal Expense Sources")
-    for category2, amount2 in total_expense_categories.items():
-        if total_expense > 0:
-         print(f"{category2.title()} - ${amount2} ({amount2 / total_expense * 100:.1f}%)")
+    for category2, amount2 in self.total_expense_categories.items():
+        if self.total_expense > 0:
+         print(f"{category2.title()} - ${amount2} ({amount2 / self.total_expense * 100:.1f}%)")
         else:
             print(f"{category2.title()} - ${amount2} (0%)")
 
-def exchange():
-    global balance
-    profit()
-    print("\n" + " "*45 + " BALANCE EXCHANGE ")
-    base_url = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies"
+finance = FinanceTracker()
 
+class CurrencyConverter:
+    def __init__(self):
+       self.base_url = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies"
 
-    def get_currency_rate(base_currency, target_currency):
-        url = f"{base_url}/{base_currency}.json"
+    def get_currency_rate(self, base_currency, target_currency):
+        url = f"{self.base_url}/{base_currency}.json"
         response = requests.get(url)
-
+    
         if response.status_code == 200:
          data = response.json()
          if target_currency in data[base_currency]:
-             rate = data[base_currency][target_currency]
-             return rate
+          rate = data[base_currency][target_currency]
+          return rate
          else:
-            print("Error: 404")
-    
+            print("Error: 404")  
         else:
-          print(f"Error: {response.status_code}")
-
-    base_currency = "usd"
-    target_currency = input("\nTarget Currency (EUR, TRY etc.): ").strip().lower()
-    currency_rate = get_currency_rate(base_currency, target_currency)
-
-    if currency_rate:
-     exchanged_balance = balance * currency_rate
-     print(f"\nYour balance in {target_currency.upper()}: {exchanged_balance:.2f}")
+           print(f"Error: {response.status_code}")
+    
+    def convert(self, amount):
+        print("\n" + " "*45 + " BALANCE EXCHANGE ")
+        base_currency = "usd"
+        target_currency = input("\nTarget Currency (EUR, TRY etc.): ").strip().lower()
+        currency_rate = self.get_currency_rate(base_currency, target_currency)
            
+        if currency_rate:
+         exchanged_balance = amount * currency_rate
+         print(f"\nYour balance in {target_currency.upper()}: {exchanged_balance:.2f}")
 
-def save_data():
-    file1 = open("incomes.json", "w")
-    json.dump(incomes, file1)
-    file1.close()
+currency = CurrencyConverter()
+class DataManager:
+    def save_data(self):
+        file1 = open("incomes.json", "w")
+        json.dump(finance.incomes, file1)
+        file1.close()
 
-    file2 = open("expenses.json", "w")
-    json.dump(expenses, file2)
-    file2.close()
+        file2 = open("expenses.json", "w")
+        json.dump(finance.expenses, file2)
+        file2.close()
 
-    file3 = open("income_categories.json", "w")
-    json.dump(total_income_categories, file3)
-    file3.close()
+        file3 = open("income_categories.json", "w")
+        json.dump(finance.total_income_categories, file3)
+        file3.close()
 
-    file4 = open("expense_categories.json", "w")
-    json.dump(total_expense_categories, file4)
-    file4.close()
+        file4 = open("expense_categories.json", "w")
+        json.dump(finance.total_expense_categories, file4)
+        file4.close()
 
-def load_data():
-    global incomes, expenses, total_income_categories, total_expense_categories
-    try:
-     file1 = open("incomes.json", "r")
-     incomes = json.load(file1)
-     file1.close()
+    def load_data(self):
+        try:
+         file1 = open("incomes.json", "r")
+         finance.incomes = json.load(file1)
+         file1.close()
 
-     file2 = open("expenses.json", "r")
-     expenses = json.load(file2)
-     file2.close()
+         file2 = open("expenses.json", "r")
+         finance.expenses = json.load(file2)
+         file2.close()
 
-     file3 = open("income_categories.json", "r")
-     total_income_categories = json.load(file3)
-     file3.close()
+         file3 = open("income_categories.json", "r")
+         finance.total_income_categories = json.load(file3)
+         file3.close()
 
-     file4 = open("expense_categories.json", "r")
-     total_expense_categories = json.load(file4)
-     file4.close()
-    except FileNotFoundError:
-        pass
+         file4 = open("expense_categories.json", "r")
+         finance.total_expense_categories = json.load(file4)
+         file4.close()
+        except FileNotFoundError:
+           pass
 
-
+data = DataManager()
 scheduler = BackgroundScheduler()
-scheduler.add_job(save_data, 'interval', seconds = 1)
+scheduler.add_job(data.save_data, 'interval', seconds = 1)
 scheduler.start()
 
-load_data()
+data.load_data()
 while True:
     print("\n" + "-"*45 + " MENU " + "-"*45)
     print("""1. Add Income
@@ -230,15 +229,16 @@ while True:
 6. Exit""")
     menu = input("\nSelect (1, 2, 3, 4, 5 or 6): ")
     if menu == "1":
-        add_income()
+        finance.add_income()
     elif menu == "2":
-        add_expense()
+        finance.add_expense()
     elif menu == "3":
-        show_balance()
+        finance.show_balance()
     elif menu == "4":
-        show_report()
+        finance.show_report()
     elif menu == "5":
-        exchange()
+        finance.show_balance()
+        currency.convert(finance.balance)
     elif menu == "6":
         break
     else:
