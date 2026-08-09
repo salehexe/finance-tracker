@@ -175,50 +175,55 @@ class CurrencyConverter:
          print(f"\nYour balance in {target_currency.upper()}: {exchanged_balance:.2f}")
 
 currency = CurrencyConverter()
+
 class DataManager:
+    def __init__(self, finance_tracker):
+       self.ft = finance_tracker
+
     def save_data(self):
         file1 = open("incomes.json", "w")
-        json.dump(finance.incomes, file1)
+        json.dump(self.ft.incomes, file1)
         file1.close()
 
         file2 = open("expenses.json", "w")
-        json.dump(finance.expenses, file2)
+        json.dump(self.ft.expenses, file2)
         file2.close()
 
         file3 = open("income_categories.json", "w")
-        json.dump(finance.total_income_categories, file3)
+        json.dump(self.ft.total_income_categories, file3)
         file3.close()
 
         file4 = open("expense_categories.json", "w")
-        json.dump(finance.total_expense_categories, file4)
+        json.dump(self.ft.total_expense_categories, file4)
         file4.close()
 
     def load_data(self):
         try:
          file1 = open("incomes.json", "r")
-         finance.incomes = json.load(file1)
+         self.ft.incomes = json.load(file1)
          file1.close()
 
          file2 = open("expenses.json", "r")
-         finance.expenses = json.load(file2)
+         self.ft.expenses = json.load(file2)
          file2.close()
 
          file3 = open("income_categories.json", "r")
-         finance.total_income_categories = json.load(file3)
+         self.ft.total_income_categories = json.load(file3)
          file3.close()
 
          file4 = open("expense_categories.json", "r")
-         finance.total_expense_categories = json.load(file4)
+         self.ft.total_expense_categories = json.load(file4)
          file4.close()
         except FileNotFoundError:
            pass
 
-data = DataManager()
+data = DataManager(finance)
+
 scheduler = BackgroundScheduler()
 scheduler.add_job(data.save_data, 'interval', seconds = 1)
 scheduler.start()
 
-data.load_data()
+data.load_data(finance.incomes, finance.expenses, finance.total_income_categories, finance.total_expense_categories)
 while True:
     print("\n" + "-"*45 + " MENU " + "-"*45)
     print("""1. Add Income
