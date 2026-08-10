@@ -13,6 +13,7 @@ This project was built while learning Python fundamentals, gradually adding more
 - 📈 Detailed report with category breakdown and percentages
 - 💾 Data saved to JSON files — picks up where you left off
 - ⚠️ Input validation and error handling (supports decimal amounts)
+- 💵 Currency Converter (with API)
 
 ## 🛠️ Technologies
 
@@ -51,6 +52,9 @@ python financetracker.py
 - Exception handling (`try`/`except`)
 - File handling (read/write, JSON)
 - String formatting (f-strings)
+- Object Oriented Programming
+- Using API
+-- APScheduler
 
 ---
 
